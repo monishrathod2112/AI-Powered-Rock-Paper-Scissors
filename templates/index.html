@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero" style="min-height: 85vh; padding: 20px 10px;">
+    <!-- Animated floating icons in the background -->
+    <div class="floating-cards-container">
+        <div class="floating-hand float-rock">
+            <span class="emoji">🪨</span>
+            <span class="label">Rock</span>
+        </div>
+        <div class="floating-hand float-paper">
+            <span class="emoji">📄</span>
+            <span class="label">Paper</span>
+        </div>
+        <div class="floating-hand float-scissors">
+            <span class="emoji">✂️</span>
+            <span class="label">Scissors</span>
+        </div>
+    </div>
+
+    <div class="hero-content">
+        <div class="hero-badge">🧠 Evolving AI Predictor</div>
+        <h1>
+            <span>AI-Powered</span><br>
+            Rock Paper Scissors
+        </h1>
+        
+        <p>
+            An adaptive gaming experience. Play against a neural prediction engine that analyzes your decisions, learns your habits, and evolves in real time.
+        </p>
+
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <a href="/game" style="text-decoration: none;">
+                <button class="play-btn btn-primary" style="font-size: 18px; padding: 16px 40px; border-radius: 12px;">
+                    🎮 Play Battle Arena
+                </button>
+            </a>
+            <a href="/leaderboard" class="btn btn-secondary" style="font-size: 18px; padding: 15px 35px; border-radius: 12px;">
+                🏆 View Leaderboards
+            </a>
+        </div>
+    </div>
+</section>
+
+{% include "features.html" %}
+
+<section class="how-it-works" style="padding: 60px 20px; text-align: center; max-width: 1000px; margin: 0 auto;">
+    <h2 style="font-family: 'Outfit', sans-serif; font-size: 32px; margin-bottom: 40px;">How It Learns</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+        <div class="card" style="padding: 30px 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 15px;">🧠</div>
+            <h3 style="font-size: 18px; margin-bottom: 10px; text-align: center;">1. Record Move</h3>
+            <p style="text-align: center; font-size: 14px;">The engine tracks your moves (Rock, Paper, or Scissors) and logs the choices in a local SQLite database.</p>
+        </div>
+        <div class="card" style="padding: 30px 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 15px;">🔍</div>
+            <h3 style="font-size: 18px; margin-bottom: 10px; text-align: center;">2. Pattern Analysis</h3>
+            <p style="text-align: center; font-size: 14px;">A decision tree classifier uses your move history to analyze predictive loops and identify biases.</p>
+        </div>
+        <div class="card" style="padding: 30px 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 15px;">⚡</div>
+            <h3 style="font-size: 18px; margin-bottom: 10px; text-align: center;">3. Evolve Choice</h3>
+            <p style="text-align: center; font-size: 14px;">AI calculates the optimal counter-strategy to defeat your predicted choice on the fly.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block content %}
+<div class="leaderboard-container">
+    <h1 style="text-align: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 38px; margin-bottom: 10px;">🏆 Leaderboard</h1>
+    <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Global rankings based on total player victories.</p>
+
+    <!-- Search Form -->
+    <form method="GET" class="search-form">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search Player by Username..."
+            value="{{ search }}"
+            style="min-width: 300px;"
+        >
+        <button type="submit" class="btn btn-primary">
+            🔍 Search
+        </button>
+    </form>
+
+    <div class="dashboard-table-wrapper" style="margin-top: 20px;">
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Avatar</th>
+                    <th>Player</th>
+                    <th>Games Played</th>
+                    <th>Wins</th>
+                    <th>Win Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if leaderboard %}
+                {% for player in leaderboard %}
+                <tr {% if player.id == current_user.id %}style="background: rgba(99, 102, 241, 0.15); border-left: 4px solid var(--primary);"{% endif %}>
+                    <!-- Rank Column -->
+                    <td style="font-weight: 700;">
+                        {% if loop.index == 1 %}
+                            <span class="rank-pill rank1">🥇 #1</span>
+                        {% elif loop.index == 2 %}
+                            <span class="rank-pill rank2">🥈 #2</span>
+                        {% elif loop.index == 3 %}
+                            <span class="rank-pill rank3">🥉 #3</span>
+                        {% else %}
+                            <span class="rank-pill" style="color: var(--text-muted);">#{{ loop.index }}</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Avatar Column -->
+                    <td>
+                        {% if player.profile_image %}
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + player.profile_image) }}"
+                                class="leaderboard-avatar"
+                                alt="{{ player.username }}"
+                            >
+                        {% else %}
+                            <img
+                                src="{{ url_for('static', filename='images/default.png') }}"
+                                class="leaderboard-avatar"
+                                alt="{{ player.username }}"
+                            >
+                        {% endif %}
+                    </td>
+
+                    <!-- Username Column -->
+                    <td style="font-weight: 600; color: var(--text-main);">
+                        {{ player.username }}
+                        {% if player.id == current_user.id %}
+                            <span style="font-size: 11px; background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">YOU</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Games Column -->
+                    <td>{{ player.games }}</td>
+
+                    <!-- Wins Column -->
+                    <td>{{ player.wins }}</td>
+
+                    <!-- Win Rate Column -->
+                    <td style="font-weight: 600; color: var(--success);">
+                        {% if player.games > 0 %}
+                            {{ "%.2f"|format((player.wins / player.games) * 100) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 30px;">
+                        🚫 No players found.
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

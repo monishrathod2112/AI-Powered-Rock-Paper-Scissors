@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>🔐 Welcome Back</h1>
+    <p class="auth-subtitle">Login to your AI RPS account to play and track progress.</p>
+
+    <form action="/login" method="POST">
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="Enter password"
+                    required
+                    style="padding-right: 80px;"
+                >
+                <button
+                    type="button"
+                    onclick="togglePassword(event)"
+                    style="position: absolute; right: 8px; padding: 6px 12px; font-size: 13px; background: rgba(255,255,255,0.08); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; width: auto; min-width: auto; height: auto;"
+                >
+                    👁 Show
+                </button>
+            </div>
+        </div>
+
+        <label class="remember-me">
+            <input
+                type="checkbox"
+                name="remember"
+            >
+            Remember Me
+        </label>
+
+        <button type="submit" class="auth-btn">
+            Login Securely
+        </button>
+
+        <p class="auth-link">
+            Don't have an account? <a href="/register">Register Here</a>
+        </p>
+        <p class="auth-link" style="margin-top: 8px; font-size: 13px;">
+            <a href="/forgot-password" style="color: var(--text-muted); font-weight: 500;">Forgot Password?</a>
+        </p>
+    </form>
+</div>
+
+<script>
+function togglePassword(e) {
+    e.preventDefault();
+    const password = document.getElementById("password");
+    const button = e.target;
+
+    if (password.type === "password") {
+        password.type = "text";
+        button.innerHTML = "🙈 Hide";
+    } else {
+        password.type = "password";
+        button.innerHTML = "👁 Show";
+    }
+}
+</script>
+{% endblock %}

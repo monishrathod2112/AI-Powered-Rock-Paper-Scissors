@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="game-container" style="max-width: 1100px;">
+    <h1>📊 AI RPS Dashboard</h1>
+    <p style="color: var(--text-muted); margin-bottom: 30px;">Overview of game metrics, statistics, and pattern
+        learning.</p>
+
+    <!-- Metrics Grid -->
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <h2>🎮 Total Games</h2>
+            <h1>{{ total_games }}</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>🏆 Player Wins</h2>
+            <h1>{{ player_wins }}</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>🤖 AI Wins</h2>
+            <h1>{{ ai_wins }}</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>🤝 Total Draws</h2>
+            <h1>{{ draws }}</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>🎯 AI Accuracy</h2>
+            <h1>{{ ai_accuracy }}%</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>👤 Win Rate</h2>
+            <h1>{{ player_accuracy }}%</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>🔥 Current Streak</h2>
+            <h1>{{ player_streak }}</h1>
+        </div>
+        <div class="dashboard-card">
+            <h2>👑 Best Streak</h2>
+            <h1>{{ best_player_streak }}</h1>
+        </div>
+    </div>
+
+    <br><br>
+
+    <!-- Interactive Charts Section -->
+    <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px; margin-bottom: 10px; text-align: left;">📈 Analytics
+        & Visualizations</h2>
+    <div class="charts-grid">
+        <!-- Chart 1 -->
+        <div class="chart-box">
+            <h2>🏆 Win/Loss Distribution</h2>
+            <div class="chart-canvas-container">
+                <canvas id="winLossChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2 -->
+        <div class="chart-box">
+            <h2>🎯 Difficulty Choices</h2>
+            <div class="chart-canvas-container">
+                <canvas id="difficultyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 3 -->
+        <div class="chart-box">
+            <h2>🪨 Player Choices</h2>
+            <div class="chart-canvas-container">
+                <canvas id="playerMoveChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 4 -->
+        <div class="chart-box">
+            <h2>🤖 AI Choices</h2>
+            <div class="chart-canvas-container">
+                <canvas id="aiMoveChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Growth Chart -->
+    <div class="chart-box" style="margin-bottom: 40px; width: 100%;">
+        <h2>📈 Game Growth Progression</h2>
+        <div style="position: relative; width: 100%; height: 300px;">
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Match History -->
+    <h2 style="font-family: 'Outfit', sans-serif; font-size: 24px; margin-bottom: 10px; text-align: left;">📋 Match
+        History</h2>
+
+    <form method="GET" action="/dashboard" class="search-form">
+        <input type="text" name="winner" placeholder="Search Winner..." value="{{ request.args.get('winner','') }}">
+        <select name="difficulty">
+            <option value="">All Difficulty</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <button type="submit" class="btn btn-primary">
+            🔍 Filter
+        </button>
+    </form>
+
+    <div class="dashboard-table-wrapper">
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Player Choice</th>
+                    <th>AI Choice</th>
+                    <th>Winner</th>
+                    <th>Difficulty</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if games %}
+                {% for game in games %}
+                <tr>
+                    <td>{{ game.id }}</td>
+                    <td>{{ game.player_choice }}</td>
+                    <td>{{ game.ai_choice }}</td>
+                    <td>
+                        {% if "Player Wins" in game.winner %}
+                        <span style="color: var(--success); font-weight: 600;">{{ game.winner }}</span>
+                        {% elif "AI Wins" in game.winner %}
+                        <span style="color: var(--danger); font-weight: 600;">{{ game.winner }}</span>
+                        {% else %}
+                        <span style="color: var(--warning); font-weight: 600;">{{ game.winner }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if game.difficulty == "hard" %}
+                        <span
+                            style="background: rgba(239, 68, 68, 0.15); color: #f87171; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">🔴
+                            Hard</span>
+                        {% elif game.difficulty == "medium" %}
+                        <span
+                            style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">🟡
+                            Medium</span>
+                        {% else %}
+                        <span
+                            style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">🟢
+                            Easy</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:30px;">
+                        🚫 No match history found.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="/export" style="text-decoration: none;">
+        <button class="export-btn btn">
+            ⬇ Export CSV Data
+        </button>
+    </a>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Chart.js Global Config for dark theme
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#f8fafc',
+                    padding: 15,
+                    font: {
+                        size: 12
+                    }
+                }
+            }
+        }
+    };
+
+    // Win Loss Chart (Doughnut)
+    new Chart(document.getElementById("winLossChart"), {
+        type: "doughnut",
+        data: {
+            labels: ["Player Wins", "AI Wins", "Draws"],
+            datasets: [{
+                data: [{{ player_wins }}, {{ ai_wins }}, {{ draws }}],
+        backgroundColor: ["#10b981", "#ef4444", "#f59e0b"],
+        borderWidth: 2,
+        borderColor: "#111827"
+        }]
+    },
+        options: commonOptions
+});
+
+    // Difficulty Chart (Doughnut)
+    new Chart(document.getElementById("difficultyChart"), {
+        type: "doughnut",
+        data: {
+            labels: ["Easy", "Medium", "Hard"],
+            datasets: [{
+                data: [{{ easy_games }}, {{ medium_games }}, {{ hard_games }}],
+        backgroundColor: ["#34d399", "#fbbf24", "#f87171"],
+        borderWidth: 2,
+        borderColor: "#111827"
+        }]
+    },
+        options: commonOptions
+});
+
+    // Player Choice distribution (Pie)
+    new Chart(document.getElementById("playerMoveChart"), {
+        type: "pie",
+        data: {
+            labels: ["Rock", "Paper", "Scissors"],
+            datasets: [{
+                data: [{{ rock_count }}, {{ paper_count }}, {{ scissors_count }}],
+        backgroundColor: ["#6366f1", "#38bdf8", "#ec4899"],
+        borderWidth: 2,
+        borderColor: "#111827"
+        }]
+    },
+        options: commonOptions
+});
+
+    // AI Choice distribution (Pie)
+    new Chart(document.getElementById("aiMoveChart"), {
+        type: "pie",
+        data: {
+            labels: ["Rock", "Paper", "Scissors"],
+            datasets: [{
+                data: [{{ ai_rock_count }}, {{ ai_paper_count }}, {{ ai_scissors_count }}],
+        backgroundColor: ["#6366f1", "#38bdf8", "#ec4899"],
+        borderWidth: 2,
+        borderColor: "#111827"
+        }]
+    },
+        options: commonOptions
+});
+
+    // Growth Timeline (Line Chart)
+    new Chart(document.getElementById("lineChart"), {
+        type: "line",
+        data: {
+            labels: {{ chart_labels | tojson }},
+        datasets: [{
+            label: "Total Match Iterations",
+            data: {{ chart_data | tojson }},
+        borderColor: "#6366f1",
+        backgroundColor: "rgba(99, 102, 241, 0.15)",
+        fill: true,
+        tension: 0.35,
+        borderWidth: 3
+        }]
+    },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: "rgba(255, 255, 255, 0.05)"
+                },
+                ticks: {
+                    color: "#94a3b8"
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: "rgba(255, 255, 255, 0.05)"
+                },
+                ticks: {
+                    color: "#94a3b8",
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

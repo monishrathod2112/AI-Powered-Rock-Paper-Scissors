@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Play Game{% endblock %}
+
+{% block content %}
+<div class="game-container">
+    <div class="sound-control">
+        <button id="sound-toggle" class="btn-sound" onclick="toggleSound()">
+            <span id="sound-icon">🔊</span>
+            <span id="sound-text">Sound: ON</span>
+        </button>
+    </div>
+    <h1>🎮 Rock Paper Scissors</h1>
+    <p style="color: var(--text-muted); margin-bottom: 20px;">Challenge our AI and test its predictive intelligence.</p>
+
+    <div class="difficulty-box">
+        <h2>Select AI Difficulty</h2>
+        <select id="difficulty" onchange="soundManager.playClick()">
+            <option value="easy">🟢 Easy Mode (Random)</option>
+            <option value="medium">🟡 Medium Mode (Semi-Random)</option>
+            <option value="hard" selected>🔴 Hard Mode (Machine Learning)</option>
+        </select>
+    </div>
+
+    <!-- Neon Score Board -->
+    <div class="score-board">
+        <div class="score">
+            <h2>Player</h2>
+            <h3 id="player-score">0</h3>
+        </div>
+        <div class="score">
+            <h2>AI Agent</h2>
+            <h3 id="ai-score">0</h3>
+        </div>
+        <div class="score">
+            <h2>Draw</h2>
+            <h3 id="draw-score">0</h3>
+        </div>
+    </div>
+
+    <h2 id="ai-status">🤖 AI is ready for your move.</h2>
+
+    <!-- Choice Option Cards -->
+    <div class="buttons">
+        <button class="option-btn" onclick="playGame('rock')">
+            <span style="font-size: 36px;">🪨</span>
+            <span>Rock</span>
+        </button>
+        <button class="option-btn" onclick="playGame('paper')">
+            <span style="font-size: 36px;">📄</span>
+            <span>Paper</span>
+        </button>
+        <button class="option-btn" onclick="playGame('scissors')">
+            <span style="font-size: 36px;">✂️</span>
+            <span>Scissors</span>
+        </button>
+    </div>
+
+    <!-- Battle Arena Visualizer -->
+    <div class="battle-arena-wrapper">
+        <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Battle
+            Arena</h2>
+        <div class="battle-arena" id="arena">
+            <div class="fighter-card" id="player-card">
+                <span class="label">You</span>
+                <div class="fighter-icon-box" id="player-choice-display">❓</div>
+            </div>
+            <div class="fighter-card" id="ai-card">
+                <span class="label">AI Agent</span>
+                <div class="fighter-icon-box" id="ai-choice-display">❓</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="outcome-wrapper">
+        <p id="winner" class="outcome-text" style="display: none;"></p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/sound.js') }}"></script>
+<script>
+    let playerScore = 0;
+    let aiScore = 0;
+    let drawScore = 0;
+
+    const emojis = {
+        'rock': '🪨',
+        'paper': '📄',
+        'scissors': '✂️'
+    };
+
+    // Sync Sound UI status
+    function initSoundUI() {
+        const soundToggle = document.getElementById("sound-toggle");
+        const soundIcon = document.getElementById("sound-icon");
+        const soundText = document.getElementById("sound-text");
+
+        if (soundManager.isMuted()) {
+            soundToggle.classList.add("muted");
+            soundIcon.innerHTML = "🔇";
+            soundText.innerHTML = "Sound: OFF";
+        } else {
+            soundToggle.classList.remove("muted");
+            soundIcon.innerHTML = "🔊";
+            soundText.innerHTML = "Sound: ON";
+        }
+    }
+
+    // User-triggered sound toggle
+    function toggleSound() {
+        const isMuted = soundManager.toggleMute();
+        initSoundUI();
+        if (!isMuted) {
+            soundManager.playClick();
+        }
+    }
+
+    // Initialize Sound UI on DOM load
+    document.addEventListener("DOMContentLoaded", () => {
+        initSoundUI();
+    });
+
+    async function playGame(choice) {
+        // Play choice click SFX
+        soundManager.playClick();
+
+        const playerCard = document.getElementById("player-card");
+        const aiCard = document.getElementById("ai-card");
+        const playerDisplay = document.getElementById("player-choice-display");
+        const aiDisplay = document.getElementById("ai-choice-display");
+        const winnerEl = document.getElementById("winner");
+        const statusEl = document.getElementById("ai-status");
+
+        // 1. Reset states & trigger shake animations
+        playerCard.classList.remove("active");
+        aiCard.classList.remove("active");
+        winnerEl.style.display = "none";
+        winnerEl.className = "outcome-text";
+
+        playerDisplay.innerHTML = "👊";
+        aiDisplay.innerHTML = "👊";
+
+        playerDisplay.classList.add("battle-shake");
+        aiDisplay.classList.add("battle-shake");
+        statusEl.innerHTML = "🤖 AI is thinking...";
+
+        // Play battle shake tension SFX
+        soundManager.playBattle();
+
+        // Simple delay for visual suspense
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        try {
+            const response = await fetch("/play", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    choice: choice,
+                    difficulty: document.getElementById("difficulty").value
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Server Error");
+            }
+
+            const data = await response.json();
+
+            // Remove shake class to animate reveal
+            playerDisplay.classList.remove("battle-shake");
+            aiDisplay.classList.remove("battle-shake");
+
+            // 2. Set custom displays
+            playerDisplay.innerHTML = emojis[data.player.toLowerCase()] || data.player;
+            aiDisplay.innerHTML = emojis[data.ai.toLowerCase()] || data.ai;
+
+            playerCard.classList.add("active");
+            aiCard.classList.add("active");
+
+            // 3. Update scores and winner message
+            winnerEl.style.display = "inline-block";
+
+            if (data.winner === "Player Wins 🎉") {
+                playerScore++;
+                winnerEl.innerHTML = "🏆 You Won! " + data.winner;
+                winnerEl.classList.add("outcome-win");
+                statusEl.innerHTML = "🎉 Congratulations!";
+                soundManager.playWin(); // Play victory SFX
+            } else if (data.winner === "AI Wins 🤖") {
+                aiScore++;
+                winnerEl.innerHTML = "🤖 AI Won! " + data.winner;
+                winnerEl.classList.add("outcome-loss");
+                statusEl.innerHTML = "🤖 Better luck next time!";
+                soundManager.playLose(); // Play defeat SFX
+            } else {
+                drawScore++;
+                winnerEl.innerHTML = "🤝 It's a Draw!";
+                winnerEl.classList.add("outcome-draw");
+                statusEl.innerHTML = "🤝 Stalemate!";
+                soundManager.playDraw(); // Play draw SFX
+            }
+
+            // Update score board text
+            document.getElementById("player-score").innerHTML = playerScore;
+            document.getElementById("ai-score").innerHTML = aiScore;
+            document.getElementById("draw-score").innerHTML = drawScore;
+
+        } catch (error) {
+            playerDisplay.classList.remove("battle-shake");
+            aiDisplay.classList.remove("battle-shake");
+            playerDisplay.innerHTML = "❌";
+            aiDisplay.innerHTML = "❌";
+            console.error(error);
+            statusEl.innerHTML = "❌ Game Error!";
+            alert("Could not process game move. Please make sure you are logged in!");
+        }
+    }
+</script>
+{% endblock %}

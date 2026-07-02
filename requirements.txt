@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-WTF
+WTForms
+pandas
+numpy
+scikit-learn
+matplotlib
+joblib
+python-dotenv
+rich
+colorama
+Flask-Mail

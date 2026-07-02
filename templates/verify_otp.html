@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP{% endblock %}
+
+{% block content %}
+<div class="auth-container" style="max-width: 450px;">
+    <h1>🔐 Verify OTP</h1>
+    <p class="auth-subtitle">Enter the 6-digit OTP code sent to your email to verify identity.</p>
+
+    <form action="/verify-otp" method="POST">
+        <div class="form-group">
+            <label for="otp">One-Time Password (OTP)</label>
+            <input
+                id="otp"
+                type="text"
+                name="otp"
+                placeholder="Enter 6-digit code"
+                required
+                maxlength="6"
+                style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 700;"
+            >
+        </div>
+
+        <button type="submit" class="auth-btn">
+            Verify & Proceed
+        </button>
+
+        <p class="auth-link">
+            Didn't get the code? <a href="/forgot-password">Resend Code</a>
+        </p>
+    </form>
+</div>
+{% endblock %}

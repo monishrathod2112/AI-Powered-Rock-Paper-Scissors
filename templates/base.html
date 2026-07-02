@@ -20,7 +20,15 @@
                 <span class="logo-emoji">🤖</span>
                 <span class="logo-text">AI <span class="accent-text">RPS</span></span>
             </div>
-            <ul class="nav-links">
+
+            <!-- Hamburger Button (mobile/tablet only) -->
+            <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-links" id="nav-links">
                 <li><a href="/" class="nav-link">Home</a></li>
                 <li><a href="/game" class="nav-link">Play</a></li>
                 <li><a href="/leaderboard" class="nav-link">Leaderboard</a></li>
@@ -52,5 +60,38 @@
         {% block content %}
         {% endblock %}
     </main>
+
+    <!-- Hamburger Toggle Script -->
+    <script>
+        (function () {
+            const btn = document.getElementById('hamburger-btn');
+            const nav = document.getElementById('nav-links');
+            if (!btn || !nav) return;
+
+            btn.addEventListener('click', function () {
+                const isOpen = nav.classList.toggle('open');
+                btn.classList.toggle('open', isOpen);
+                btn.setAttribute('aria-expanded', isOpen);
+            });
+
+            // Close menu when any nav link is clicked
+            nav.querySelectorAll('.nav-link').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    nav.classList.remove('open');
+                    btn.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                });
+            });
+
+            // Close menu on outside click
+            document.addEventListener('click', function (e) {
+                if (!btn.contains(e.target) && !nav.contains(e.target)) {
+                    nav.classList.remove('open');
+                    btn.classList.remove('open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        })();
+    </script>
 </body>
-</html>
+</html>

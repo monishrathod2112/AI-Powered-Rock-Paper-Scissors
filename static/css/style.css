@@ -1322,3 +1322,525 @@ select option {
         justify-content: center;
     }
 }
+
+/* ==========================================================================
+   RESPONSIVE DESIGN — LAPTOP, TABLET, MOBILE
+   ========================================================================== */
+
+/* ── Hamburger Menu Toggle ───────────────────────────────────────────────── */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    transition: var(--transition-smooth);
+    z-index: 200;
+}
+
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-main);
+    border-radius: 2px;
+    transition: var(--transition-smooth);
+}
+
+.hamburger.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── LAPTOP (≤ 1024px) ───────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 14px 24px;
+    }
+
+    .main-content {
+        padding: 30px 24px;
+    }
+
+    .hero h1 {
+        font-size: 52px;
+    }
+
+    .hero p {
+        font-size: 18px;
+    }
+
+    .card-container {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .game-container {
+        max-width: 720px;
+        padding: 38px 28px;
+    }
+
+    .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .leaderboard-container {
+        margin: 30px auto;
+    }
+
+    .profile-card {
+        width: 460px;
+    }
+}
+
+/* ── TABLET (≤ 768px) ────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+    /* Navbar — slide-down mobile menu */
+    .navbar {
+        padding: 12px 20px;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        position: absolute;
+        top: 62px;
+        left: 0;
+        right: 0;
+        background: rgba(10, 14, 28, 0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--card-border);
+        padding: 16px 24px 24px;
+        z-index: 150;
+        animation: slideDownAlert 0.25s ease-out;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-link {
+        display: block;
+        padding: 10px 14px;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .btn-register, .btn-logout {
+        display: inline-block;
+        margin-top: 6px;
+        text-align: center;
+    }
+
+    /* Hero */
+    .hero {
+        min-height: 55vh;
+        padding: 20px 0;
+    }
+
+    .hero h1 {
+        font-size: 38px;
+        letter-spacing: -0.5px;
+    }
+
+    .hero p {
+        font-size: 16px;
+        margin-bottom: 28px;
+    }
+
+    /* Main content */
+    .main-content {
+        padding: 24px 16px;
+    }
+
+    /* Features */
+    .features {
+        padding: 50px 0;
+    }
+
+    .features h2 {
+        font-size: 28px;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Game container */
+    .game-container {
+        max-width: 100%;
+        margin: 20px auto;
+        padding: 30px 20px;
+        border-radius: 18px;
+    }
+
+    .game-container h1 {
+        font-size: 28px;
+    }
+
+    /* Score board */
+    .score-board {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 24px 0;
+    }
+
+    .score {
+        padding: 14px 10px;
+    }
+
+    .score h2 {
+        font-size: 11px;
+    }
+
+    .score h3 {
+        font-size: 28px;
+    }
+
+    /* Game option buttons */
+    .buttons {
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .option-btn {
+        padding: 16px 24px;
+        min-width: 100px;
+        border-radius: 14px;
+    }
+
+    /* Battle Arena */
+    .battle-arena {
+        padding: 22px 14px;
+    }
+
+    .fighter-icon-box {
+        width: 75px;
+        height: 75px;
+        font-size: 32px;
+    }
+
+    /* Sound control */
+    .sound-control {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-bottom: 18px;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Dashboard cards */
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .dashboard-card h1 {
+        font-size: 28px;
+    }
+
+    /* Charts */
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Leaderboard */
+    .leaderboard-container {
+        margin: 20px auto;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
+
+    .leaderboard-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    /* Profile */
+    .profile-card {
+        width: 100%;
+        max-width: 420px;
+        padding: 30px 20px;
+    }
+
+    .profile-image,
+    .profile-image-container {
+        width: 110px;
+        height: 110px;
+    }
+
+    .profile-card h2 {
+        font-size: 22px;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .profile-actions .btn,
+    .profile-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Auth forms */
+    .auth-container {
+        max-width: 100%;
+        margin: 30px 16px;
+        padding: 30px 20px;
+    }
+
+    /* Search form */
+    .search-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .search-form input,
+    .search-form select,
+    .search-form button {
+        min-width: unset;
+        width: 100%;
+    }
+
+    /* Floating cards — hide on small screens */
+    .floating-cards-container {
+        display: none;
+    }
+
+    /* Difficulty selector */
+    #difficulty {
+        font-size: 14px;
+        padding: 9px 16px;
+    }
+
+    /* AI Status */
+    #ai-status {
+        font-size: 13px;
+    }
+
+    /* Outcome text */
+    .outcome-text {
+        font-size: 17px;
+        padding: 8px 18px;
+    }
+}
+
+/* ── MOBILE (≤ 480px) ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+    /* Hero */
+    .hero h1 {
+        font-size: 28px;
+        letter-spacing: 0;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .hero-badge {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+
+    /* Game container */
+    .game-container {
+        margin: 12px auto;
+        padding: 22px 14px;
+        border-radius: 16px;
+    }
+
+    .game-container h1 {
+        font-size: 22px;
+    }
+
+    /* Score board — stack on tiny screens */
+    .score-board {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin: 18px 0;
+    }
+
+    .score {
+        padding: 10px 6px;
+    }
+
+    .score h2 {
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .score h3 {
+        font-size: 24px;
+    }
+
+    /* Option buttons — 3 across on small phones */
+    .buttons {
+        gap: 8px;
+        margin: 16px 0;
+    }
+
+    .option-btn {
+        padding: 14px 12px;
+        min-width: 80px;
+        flex: 1;
+    }
+
+    .option-btn span[style] {
+        font-size: 28px !important;
+    }
+
+    .option-btn span:not([style]) {
+        font-size: 13px;
+    }
+
+    /* Battle Arena */
+    .battle-arena {
+        padding: 16px 10px;
+        flex-direction: row;
+    }
+
+    .battle-arena::after {
+        font-size: 28px;
+    }
+
+    .fighter-icon-box {
+        width: 62px;
+        height: 62px;
+        font-size: 26px;
+    }
+
+    .fighter-card {
+        width: 44%;
+    }
+
+    .fighter-card .label {
+        font-size: 10px;
+    }
+
+    /* Dashboard cards */
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .dashboard-card {
+        padding: 18px 12px;
+    }
+
+    .dashboard-card h1 {
+        font-size: 24px;
+    }
+
+    /* Leaderboard table — scroll on mobile */
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .leaderboard-avatar {
+        width: 28px;
+        height: 28px;
+    }
+
+    .rank-pill {
+        font-size: 14px;
+    }
+
+    /* Profile */
+    .profile-card {
+        padding: 24px 16px;
+    }
+
+    .profile-image,
+    .profile-image-container {
+        width: 90px;
+        height: 90px;
+    }
+
+    .profile-card h2 {
+        font-size: 20px;
+    }
+
+    .stat-item span:last-child {
+        font-size: 20px;
+    }
+
+    /* Auth */
+    .auth-container {
+        margin: 20px 12px;
+        padding: 24px 16px;
+    }
+
+    .auth-container h1 {
+        font-size: 24px;
+    }
+
+    /* Navbar logo */
+    .logo-text {
+        font-size: 20px;
+    }
+
+    .logo-emoji {
+        font-size: 22px;
+    }
+
+    /* Outcome */
+    .outcome-text {
+        font-size: 15px;
+        padding: 7px 14px;
+    }
+
+    /* Sound button */
+    .btn-sound {
+        font-size: 13px;
+        padding: 7px 12px;
+    }
+
+    /* BG glow — reduce on tiny screens */
+    .bg-glow {
+        width: 300px;
+        height: 300px;
+        filter: blur(80px);
+    }
+
+    /* Flash messages */
+    .flash-container {
+        padding: 0 12px;
+    }
+}

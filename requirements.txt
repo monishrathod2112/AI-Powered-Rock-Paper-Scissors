@@ -12,3 +12,4 @@ python-dotenv
 rich
 colorama
 Flask-Mail
+gunicorn

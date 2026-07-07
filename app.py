@@ -15,7 +15,9 @@ from flask import (
     Response,
     redirect,
     flash,
-    session
+    session,
+    url_for,
+    abort
 )
 from config import Config
 from models.database import db, GameHistory, User
@@ -294,18 +296,22 @@ def play():
 @app.route("/dashboard")
 @login_required
 def dashboard():
+    view = request.args.get("view", "all")
+    base_query = GameHistory.query
+    if view == "user":
+        base_query = base_query.filter_by(user_id=current_user.id)
 
-    total_games = GameHistory.query.count()
+    total_games = base_query.count()
 
-    player_wins = GameHistory.query.filter_by(
+    player_wins = base_query.filter_by(
         winner="Player Wins 🎉"
     ).count()
 
-    ai_wins = GameHistory.query.filter_by(
+    ai_wins = base_query.filter_by(
         winner="AI Wins 🤖"
     ).count()
 
-    draws = GameHistory.query.filter_by(
+    draws = base_query.filter_by(
         winner="Draw"
     ).count()
 
@@ -319,7 +325,7 @@ def dashboard():
     winner = request.args.get("winner")
     difficulty = request.args.get("difficulty")
 
-    query = GameHistory.query
+    query = base_query
 
     if winner:
         query = query.filter(
@@ -364,45 +370,45 @@ def dashboard():
             player_streak = 0
             ai_streak = 0
 
-    easy_games = GameHistory.query.filter_by(
-    difficulty="easy"
+    easy_games = base_query.filter_by(
+        difficulty="easy"
     ).count()
 
-    medium_games = GameHistory.query.filter_by(
+    medium_games = base_query.filter_by(
         difficulty="medium"
     ).count()
 
-    hard_games = GameHistory.query.filter_by(
+    hard_games = base_query.filter_by(
         difficulty="hard"
     ).count()
 
 # -----------------------------
 # Player Move Analytics
 # -----------------------------
-    rock_count = GameHistory.query.filter_by(
+    rock_count = base_query.filter_by(
         player_choice="rock"
     ).count()
 
-    paper_count = GameHistory.query.filter_by(
+    paper_count = base_query.filter_by(
         player_choice="paper"
     ).count()
 
-    scissors_count = GameHistory.query.filter_by(
+    scissors_count = base_query.filter_by(
         player_choice="scissors"
     ).count()
 
 # -----------------------------
 # AI Move Analytics
 # -----------------------------
-    ai_rock_count = GameHistory.query.filter_by(
+    ai_rock_count = base_query.filter_by(
         ai_choice="rock"
     ).count()
 
-    ai_paper_count = GameHistory.query.filter_by(
+    ai_paper_count = base_query.filter_by(
         ai_choice="paper"
     ).count()
 
-    ai_scissors_count = GameHistory.query.filter_by(
+    ai_scissors_count = base_query.filter_by(
         ai_choice="scissors"
     ).count()
 
@@ -415,6 +421,7 @@ def dashboard():
 
     return render_template(
         "dashboard.html",
+        view=view,
         total_games=total_games,
         player_wins=player_wins,
         ai_wins=ai_wins,
@@ -529,6 +536,21 @@ def change_password():
         return redirect("/profile")
 
     return render_template("change_password.html")
+
+# -----------------------------
+# Delete Account
+# -----------------------------
+@app.route("/delete-account", methods=["POST"])
+@login_required
+def delete_account():
+    # Delete all game history for the user
+    GameHistory.query.filter_by(user_id=current_user.id).delete()
+    # Delete the user record
+    db.session.delete(current_user)
+    db.session.commit()
+    logout_user()
+    flash("Your account has been deleted.", "success")
+    return redirect(url_for('home'))
 
 # -----------------------------
 # Edit Profile
@@ -806,7 +828,7 @@ def leaderboard():
             )
         ).label("wins")
 
-    ).join(
+    ).outerjoin(
 
         GameHistory,
         User.id == GameHistory.user_id

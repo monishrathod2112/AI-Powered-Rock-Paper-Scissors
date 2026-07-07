@@ -1,0 +1,54 @@
+<div class="dashboard-table-wrapper">
+    <table class="dashboard-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Player Choice</th>
+                <th>AI Choice</th>
+                <th>Winner</th>
+                <th>Difficulty</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if games %}
+            {% for game in games %}
+            <tr>
+                <td>{{ game.id }}</td>
+                <td>{{ game.player_choice }}</td>
+                <td>{{ game.ai_choice }}</td>
+                <td>
+                    {% if "Player Wins" in game.winner %}
+                    <span style="color: var(--success); font-weight: 600;">{{ game.winner }}</span>
+                    {% elif "AI Wins" in game.winner %}
+                    <span style="color: var(--danger); font-weight: 600;">{{ game.winner }}</span>
+                    {% else %}
+                    <span style="color: var(--warning); font-weight: 600;">{{ game.winner }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if game.difficulty == "hard" %}
+                    <span
+                        style="background: rgba(239, 68, 68, 0.15); color: #f87171; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">🔴
+                        Hard</span>
+                    {% elif game.difficulty == "medium" %}
+                    <span
+                        style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">🟡
+                        Medium</span>
+                    {% else %}
+                    <span
+                        style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">🟢
+                        Easy</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center; padding:30px;">
+                    🚫 No match history found.
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
